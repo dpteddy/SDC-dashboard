@@ -13,7 +13,7 @@ conda env create -f environment.yml
 conda activate SDC_plotly_310
 
 4. Run the dashboard
-python calendar_location_dropdown.py
+python dashboard.py
 
 ## Open the dashboard
 
