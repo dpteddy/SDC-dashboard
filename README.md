@@ -4,7 +4,7 @@ Dashboard for visualizing occupancy data in the SDC building.
 
 ## Setup
 
-1. Install Anaconda
+1. Install Anaconda (https://www.anaconda.com/download/success?reg=skipped)
 
 2. Create the environment
 conda env create -f environment.yml
