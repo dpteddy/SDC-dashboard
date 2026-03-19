@@ -3,22 +3,27 @@ from datetime import date
 
 app = Dash(__name__)
 
+# Dashboard Title
+app.title = "SDC Multipurpose Room Activity Tracker"
+
+# Dashboard Layout
 app.layout = html.Div([
 
+    # Date Selection
     html.H3("Date"),
 
-    
     dcc.DatePickerSingle(
         id="date-picker",
         min_date_allowed=date(2026, 1, 1),
         max_date_allowed=date.today(),
         date=date.today(),
         display_format="YYYY-MM-DD",
-        style={"width": "300px"}
+        style={"width": "300px"},
     ),
 
     html.Br(),
 
+    # Locations Dropdown
     html.H3("Locations"),
 
     dcc.Dropdown(
