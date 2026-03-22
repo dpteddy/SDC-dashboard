@@ -1,6 +1,10 @@
 from dash import Dash, html, dcc
 from datetime import date
 
+# 6 different files for data (1 for each dropdown option) 
+# recorded in 30 minumutes intervals with dates and 
+# has the location and amount of people in there
+
 app = Dash(__name__)
 
 # Dashboard Title
