@@ -13,17 +13,14 @@ app.title = "SDC Multipurpose Room Activity Tracker"
 # Dashboard Layout
 app.layout = html.Div([
 
-    # Date Selection
-    html.H3("Date"),
+    # MTU logo
+    html.Img(src='/assets/MTU_Logo.png', style={'height':'10%', 'width':'10%'}),
 
-    dcc.DatePickerSingle(
-        id="date-picker",
-        min_date_allowed=date(2026, 1, 1),
-        max_date_allowed=date.today(),
-        date=date.today(),
-        display_format="YYYY-MM-DD",
-        style={"width": "300px"},
-    ),
+    # Breaks help put a graphical component into the row of objects
+    html.Br(),
+
+    # Multipurpose room birdseye view
+    html.Img(src='/assets/SDC_Multipurpose_BirdsEye.jpeg', style={'height': '30%', 'width': '30%'}),
 
     html.Br(),
 
@@ -42,6 +39,18 @@ app.layout = html.Div([
         ],
         placeholder="Select a location",
         style={"width": "300px"}
+    ),
+
+     # Date Selection
+    html.H3("Date"),
+
+    dcc.DatePickerSingle(
+        id="date-picker",
+        min_date_allowed=date(2026, 1, 1),
+        max_date_allowed=date.today(),
+        date=date.today(),
+        display_format="YYYY-MM-DD",
+        style={"width": "300px"},
     )
 
 ])
