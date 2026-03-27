@@ -14,13 +14,13 @@ app.title = "SDC Multipurpose Room Activity Tracker"
 app.layout = html.Div([
 
     # MTU logo
-    html.Img(src='MTU_Logo.png', style={'height':'10%', 'width':'10%'}),
+    html.Img(src='assets/MTU_Logo.png', style={'height':'10%', 'width':'10%'}),
 
     # Breaks help put a graphical component into the row of objects
     html.Br(),
 
     # Multipurpose room birdseye view
-    html.Img(src='SDC_Multipurpose_BirdsEye.jpeg', style={'height': '30%', 'width': '30%'}),
+    html.Img(src='assets/SDC_Multipurpose_BirdsEye.jpeg', style={'height': '30%', 'width': '30%'}),
 
     html.Br(),
 
