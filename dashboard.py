@@ -89,8 +89,8 @@ app.layout = html.Div([
             html.H3("Date"),
             dcc.DatePickerSingle(
                 id="date-picker",
-                min_date_allowed=date(2026, 1, 1),
-                max_date_allowed=date(2027, 12, 31),
+                min_date_allowed=date(2026, 4, 6),
+                max_date_allowed=date(2026, 4, 12),
                 date=date(2026, 4, 6),
                 display_format="YYYY-MM-DD",
                 style={"width": "90%"}
