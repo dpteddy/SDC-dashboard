@@ -26,6 +26,9 @@ for key, path in files.items():
     # Extract date and time separately
     df["date"] = df["time_bin"].dt.date
     df["time"] = df["time_bin"].dt.time
+    
+    # Removing the miliseconds from the time
+    df["time_short"] = df["time"].astype(str).str[:-3]
 
     dfs[key] = df
 
@@ -143,7 +146,7 @@ def update_graph(location, selected_date):
     # Build bar graph (NO TITLE)
     fig = px.bar(
         filtered,
-        x="time",
+        x="time_short",
         y="prediction"
     )
 
