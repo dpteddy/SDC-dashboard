@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State, callback_context
 import plotly.express as px
 import pandas as pd
 from datetime import date
@@ -12,24 +12,16 @@ files = {
     "court2": "data/court2_predictions.csv",
     "court3": "data/court3_predictions.csv",
     "court4": "data/court4_predictions.csv",
-    "entire room": "data/multi_predictions.csv"   # multipurpose room
+    "entire room": "data/multi_predictions.csv"
 }
 
-# Load all CSVs into a dictionary of DataFrames
 dfs = {}
 for key, path in files.items():
     df = pd.read_csv(path)
-
-    # Parse time_bin into datetime
     df["time_bin"] = pd.to_datetime(df["time_bin"])
-
-    # Extract date and time separately
     df["date"] = df["time_bin"].dt.date
     df["time"] = df["time_bin"].dt.time
-    
-    # Removing the miliseconds from the time
     df["time_short"] = df["time"].astype(str).str[:-3]
-
     dfs[key] = df
 
 # -----------------------------
@@ -40,39 +32,27 @@ app.title = "SDC Multipurpose Room Activity Tracker"
 
 app.layout = html.Div([
 
-    # Top row: MTU logo (left) and UIL enterprise logo (right)
+    # Header logos
     html.Div([
-        html.Img(
-            src='assets/MTU_Logo.png',
-            style={'height': '70px', 'display': 'inline-block'}
-        ),
-        html.Img(
-            src='assets/UIL_Logo.png',
-            style={'height': '120px', 'display': 'inline-block'}  # enlarged for balance
-        ),
+        html.Img(src='assets/MTU_Logo.png', style={'height': '60px'}),
+        html.Img(src='assets/UIL_Logo.png', style={'height': '160px'})
     ], style={
-        "width": "100%",
-        "display": "flex",
+        "width": "100%", "display": "flex",
         "justifyContent": "space-between",
         "alignItems": "center",
         "marginBottom": "10px"
     }),
 
-    # Title centered
-    html.H1(
-        "SDC Multipurpose Room Activity Tracker",
-        style={"textAlign": "center", "marginBottom": "20px"}
-    ),
+    html.H1("SDC Multipurpose Room Activity Tracker",
+            style={"textAlign": "center", "marginBottom": "20px"}),
 
-    # Main content row (left: images + controls, right: graph)
+    # Main content row
     html.Div([
 
         # LEFT COLUMN
         html.Div([
-            html.Img(
-                src='assets/SDC_Multipurpose_BirdsEye.jpeg',
-                style={'width': '100%', 'marginBottom': '20px'}
-            ),
+            html.Img(src='assets/SDC_Multipurpose_BirdsEye.jpeg',
+                     style={'width': '100%', 'marginBottom': '20px'}),
 
             html.H3("Locations"),
             dcc.Dropdown(
@@ -98,81 +78,119 @@ app.layout = html.Div([
                 display_format="YYYY-MM-DD",
                 style={"width": "90%"}
             ),
-        ],
-        style={
-            "width": "30%",
-            "display": "inline-block",
-            "verticalAlign": "top",
-            "padding": "10px"
+
+            # Store current window index
+            dcc.Store(id="time-index", data=0)
+
+        ], style={
+            "width": "30%", "display": "inline-block",
+            "verticalAlign": "top", "padding": "10px"
         }),
 
-        # RIGHT COLUMN (Graph)
+        # RIGHT COLUMN (Graph + navigation buttons)
         html.Div([
-            dcc.Graph(id="activity-graph")
-        ],
-        style={
-            "width": "68%",
-            "display": "inline-block",
+
+            dcc.Graph(id="activity-graph"),
+
+            # Navigation buttons under the graph
+            html.Div([
+                html.Button("←", id="prev-btn", n_clicks=0,
+                            style={
+                                "fontSize": "22px",
+                                "padding": "6px 14px",
+                                "float": "left"
+                            }),
+
+                html.Button("→", id="next-btn", n_clicks=0,
+                            style={
+                                "fontSize": "22px",
+                                "padding": "6px 14px",
+                                "float": "right"
+                            }),
+            ], style={
+                "width": "100%",
+                "display": "block",
+                "marginTop": "10px",
+                "overflow": "auto"
+            })
+
+        ], style={
+            "width": "68%", "display": "inline-block",
             "padding": "10px"
         }),
 
-    ],
-    style={"display": "flex", "justifyContent": "space-between"}),
+    ], style={"display": "flex", "justifyContent": "space-between"}),
 
 ])
 
 # -----------------------------
-# Callback: update graph
+# Callback: update graph + window navigation
 # -----------------------------
 @app.callback(
     Output("activity-graph", "figure"),
+    Output("time-index", "data"),
     Input("location-dropdown", "value"),
-    Input("date-picker", "date")
+    Input("date-picker", "date"),
+    Input("prev-btn", "n_clicks"),
+    Input("next-btn", "n_clicks"),
+    State("time-index", "data")
 )
-def update_graph(location, selected_date):
+def update_graph(location, selected_date, prev_clicks, next_clicks, index):
 
     if location is None:
-        return px.bar(title="Select a location to view predictions")
+        return px.bar(title="Select a location to view predictions"), index
 
     df = dfs[location]
-
-    # Filter by selected date
     selected_date = pd.to_datetime(selected_date).date()
     filtered = df[df["date"] == selected_date]
 
     if filtered.empty:
-        return px.bar(title=f"No prediction data for {selected_date}")
+        return px.bar(title=f"No prediction data for {selected_date}"), index
 
-    # Build bar graph (NO TITLE)
+    # Convert to lists for slicing
+    times = filtered["time_short"].tolist()
+    preds = filtered["prediction"].tolist()
+
+    window_size = 18  # number of bars visible at once
+
+    # Determine which button was clicked
+    ctx = callback_context
+    if ctx.triggered:
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+        if button_id == "prev-btn":
+            index = max(0, index - window_size)
+        elif button_id == "next-btn":
+            index = min(len(times) - window_size, index + window_size)
+
+    # Slice the window
+    end = index + window_size
+    times_window = times[index:end]
+    preds_window = preds[index:end]
+
     fig = px.bar(
-        filtered,
-        x="time_short",
-        y="prediction"
+        x=times_window,
+        y=preds_window
     )
 
-    # -----------------------------
-    # Michigan Tech Theme (Gold + Black)
-    # -----------------------------
     fig.update_layout(
         xaxis_title="Time",
         yaxis_title="Predicted People Count",
         template="plotly_white",
         plot_bgcolor="#FFFFFF",
         paper_bgcolor="#FFFFFF",
-        font=dict(
-            family="Arial",
-            size=14,
-            color="#000000"
-        )
+        xaxis_tickfont=dict(size=12)
     )
 
+    fig.update_xaxes(tickangle=0)
+
     fig.update_traces(
-        marker_color="#FFCD00",        # Tech Gold
-        marker_line_color="#000000",   # Black outline
+        marker_color="#FFCD00",
+        marker_line_color="#000000",
         marker_line_width=1.2
     )
 
-    return fig
+    return fig, index
 
 
 if __name__ == "__main__":
