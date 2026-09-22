@@ -8,7 +8,7 @@ from ultralytics import YOLO
 
 # ================= SETTINGS =================
 
-MODEL_PATH = "yolov8s.pt"
+MODEL_PATH = "yolov11s.pt"
 STREAM_URL = "https://streamingwebcams.mtu.edu:1935/rtplive/camera004.stream/playlist.m3u8"
 
 CAPTURE_INTERVAL = 5  # seconds

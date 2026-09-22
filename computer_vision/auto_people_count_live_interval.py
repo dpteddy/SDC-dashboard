@@ -17,7 +17,7 @@ from datetime import datetime
 from ultralytics import YOLO
 
 # === SETTINGS ===
-MODEL_PATH = "yolov8s.pt"
+MODEL_PATH = "yolov11s.pt"
 CAPTURE_INTERVAL = 5  # seconds between captures (adjust as needed)
 BOXES_CSV = "people_boxes.csv"
 TOTAL_CSV = "people_total.csv"
