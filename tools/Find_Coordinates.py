@@ -11,7 +11,7 @@ def get_coordinates(event, x, y, flags, param):
         coordinates.append((orig_x, orig_y))
 
 # Load image
-image = cv2.imread(r"frames/multi.png")
+image = cv2.imread("../frames/multi.png")
 if image is None:
     print("Failed to load image. Check the file path!")
     exit()

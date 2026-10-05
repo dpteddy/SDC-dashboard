@@ -3,7 +3,7 @@ import numpy as np
 import csv
 
 video_path = "short_video.mp4"
-reference_image = "frames/multi.png"
+reference_image = "..frames/multi.png"
 
 cap = cv2.VideoCapture(video_path)
 
@@ -13,14 +13,14 @@ if not cap.isOpened():
 fps = int(cap.get(cv2.CAP_PROP_FPS))
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-# ROI (вставь свои координаты)
+# ROI (Region of Interest)
 rois = [
     ((144, 108, 37, 84)),  # court 1
     (286, 117, 272, 242),  # court 2
     (1328, 208, 347, 245), # court 3
     (1752, 123, 40, 66) # court 4
 ]
-# загрузить reference кадр
+# download reference frame
 ref = cv2.imread(reference_image)
 ref_gray = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY)
 
@@ -30,7 +30,7 @@ with open("courts_state.csv", "w", newline="") as f:
     writer.writerow(["time_sec","court1","court2","court3","court4"])
 
     frame_number = 0
-    check_interval = 5  # секунд
+    check_interval = 5  # seconds
 
     while frame_number < total_frames:
 
