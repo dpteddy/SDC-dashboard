@@ -23,7 +23,7 @@ while len(cells) == 0:
 today = date.today()
 time = cells[0].get_text()
 conditions = cells[1].get_text()
-temp = cells[2].get_text()
+temp = cells[2].get_text().replace("Â", "")
 precip = cells[4].get_text()
 inches = cells[5].get_text()
 humidity = cells[8].get_text()
