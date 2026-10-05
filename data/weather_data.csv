@@ -1,2 +1,2 @@
-date,time,conditions,temperature,precipitation,in,humidity
- 12:00 am,Partly Cloudy,50°F,15%,0in,70%,15 mph NW
+date,time,conditions,temperature,precipitation,in,humidity,wind
+

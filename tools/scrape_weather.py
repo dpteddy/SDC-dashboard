@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from csv import writer
+from datetime import date
 
 url = "https://www.wunderground.com/hourly/us/mi/houghton"
 
@@ -19,6 +20,7 @@ while len(cells) == 0:
 
     cells = soup.select("td")
 
+today = date.today()
 time = cells[0].get_text()
 conditions = cells[1].get_text()
 temp = cells[2].get_text()
@@ -27,7 +29,7 @@ inches = cells[5].get_text()
 humidity = cells[8].get_text()
 wind = cells[9].get_text()
 
-row = [time, conditions, temp, precip, inches, humidity, wind]
+row = [today, time, conditions, temp, precip, inches, humidity, wind]
 
 # add row of data to weather_data.csv
 with open("data/weather_data.csv", "a", newline="") as f_object:
